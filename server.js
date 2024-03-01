@@ -21,8 +21,11 @@ app.get("/mainpage",(req,res) => {
     res.sendFile(`${__dirname}/main.html`)
 })
 
-const loginRouter = require('./src/index');  
+const loginRouter = require('./src/index');  // index.js파일 import
 app.use('/login', loginRouter); // 로그인 라우터를 사용하도록 설정
+
+const accountApi = require("./src/routes/account") // account.js파일 import
+app.use("/account", accountApi)
 
 // Web Server 실행 코드
 app.listen(port, () => {

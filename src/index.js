@@ -1,7 +1,7 @@
 // 로그인 API
 
-const maria = require("../database/db");
 const router = require("express").Router() // express 안에 있는 Router만 import
+const maria = require("../database/db");
 
 // 로그인 라우트
 router.post("/", async (req, res) => {
@@ -21,7 +21,7 @@ router.post("/", async (req, res) => {
         }
 
         // DB통신
-        const results = await new Promise((resolve, reject) => {
+        const loginResult = await new Promise((resolve, reject) => {
             maria.query('SELECT * FROM user WHERE id = ? AND password = ?', [id, password], (err, results) => {
                 if (err) {
                     reject(err); // 오류 발생 시 reject 호출
@@ -32,7 +32,7 @@ router.post("/", async (req, res) => {
         });
 
         // DB 통신 결과 처리
-        if (results.length > 0) {
+        if (loginResult.length > 0) {
             req.session.userId = results[0].idx; // 세션에 사용자의 idx 저장
             console.log("Session 사용자 idx:", req.session.userId); // session 정보 확인
 
