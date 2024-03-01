@@ -13,32 +13,33 @@ router.get('/find-id', async(req, res) => {
     }
 
     try {
+
         // 예외처리
-       if(name === null || name === undefined || name === ""){
-           throw new Error("이름를 입력해주세요.")
-       } else if(phoneNumber === null || phoneNumber === undefined || phoneNumber === ""){
-           throw new Error("전화번호를 입력해주세요.")
-       }
+        if(name === null || name === undefined || name === ""){
+            throw new Error("이름를 입력해주세요.")
+        } else if(phoneNumber === null || phoneNumber === undefined || phoneNumber === ""){
+            throw new Error("전화번호를 입력해주세요.")
+        }
 
-       // DB통신
-       const findIdResult = await new Promise((resolve, reject) => {
-           maria.query('SELECT id FROM user WHERE name = ? AND phoneNumber = ?', [name, phoneNumber], (err, results) => {
-               if (err) {
-                   reject(err); // 오류 발생 시 reject 호출
-               } else {
-                   resolve(results); // 결과 반환 시 resolve 호출
-               }
-           });
-       });
+        // DB통신
+        const findIdResult = await new Promise((resolve, reject) => {
+            maria.query('SELECT id FROM user WHERE name = ? AND phoneNumber = ?', [name, phoneNumber], (err, results) => {
+                if (err) {
+                    reject(err); // 오류 발생 시 reject 호출
+                } else {
+                    resolve(results); // 결과 반환 시 resolve 호출
+                }
+            });
+        });
 
-       // DB 통신 결과 처리
-       if (findIdResult.length > 0) {
-           result.success = true;
-           result.message = "아이디 찾기 성공!";
-           result.data = findIdResult[0]; // 결과의 첫 번째 아이디를 반환
-       } else {
-           result.message = "해당 계정 정보가 존재하지 않습니다.";
-       }
+        // DB 통신 결과 처리
+        if (findIdResult.length > 0) {
+            result.success = true;
+            result.message = "아이디 찾기 성공!";
+            result.data = findIdResult[0]; // 결과의 첫 번째 아이디를 반환
+        } else {
+            result.message = "해당 계정 정보가 존재하지 않습니다.";
+        }
    } catch (e) {
        result.message = e.message;
    } finally {
@@ -47,7 +48,49 @@ router.get('/find-id', async(req, res) => {
 });
 
 // 비밀번호 찾기
-router.get('/find-password', (req, res) => {
+router.get('/find-password', async(req, res) => {
+    const { id, name, phoneNumber} = req.body
+    const result = {
+        "success" : false,
+        "message" : "",
+        "data" : null
+    }
+
+    try {
+
+        // 예외처리
+        if(id === null || id === undefined || id === ""){
+                throw new Error("아이디를 입력해주세요.")
+        }else if(name === null || name === undefined || name === ""){
+            throw new Error("이름를 입력해주세요.")
+        }else if(phoneNumber === null || phoneNumber === undefined || phoneNumber === ""){
+            throw new Error("전화번호를 입력해주세요.")
+        }
+
+        // DB통신
+        const findIdResult = await new Promise((resolve, reject) => {
+            maria.query('SELECT password FROM user WHERE id = ? AND name = ? AND phoneNumber = ?', [id, name, phoneNumber], (err, results) => {
+                if (err) {
+                    reject(err); // 오류 발생 시 reject 호출
+                } else {
+                    resolve(results); // 결과 반환 시 resolve 호출
+                }
+            });
+        });
+
+        // DB 통신 결과 처리
+        if (findIdResult.length > 0) {
+            result.success = true;
+            result.message = "비밀번호 찾기 성공!";
+            result.data = findIdResult[0]; // 결과의 첫 번째 아이디를 반환
+        } else {
+            result.message = "해당 계정 정보가 존재하지 않습니다.";
+        }
+   } catch (e) {
+       result.message = e.message;
+   } finally {
+       res.send(result);
+   }
 
 });
 
