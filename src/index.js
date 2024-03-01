@@ -14,9 +14,9 @@ router.post("/", async (req, res) => {
 
     try {
          // 예외처리
-        if(id === null || id ===undefined || id === ""){
+        if(id === null || id === undefined || id === ""){
             throw new Error("아이디를 입력해주세요.")
-        } else if(password === null || password ===undefined || password === ""){
+        } else if(password === null || password === undefined || password === ""){
             throw new Error("비밀번호를 입력해주세요.")
         }
 
