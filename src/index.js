@@ -20,7 +20,7 @@ router.post("/", async (req, res) => {
             throw new Error("비밀번호를 입력해주세요.")
         }
 
-        // DB통신 (비동기 처리)
+        // DB통신
         const results = await new Promise((resolve, reject) => {
             maria.query('SELECT * FROM user WHERE id = ? AND password = ?', [id, password], (err, results) => {
                 if (err) {
@@ -34,6 +34,8 @@ router.post("/", async (req, res) => {
         // DB 통신 결과 처리
         if (results.length > 0) {
             req.session.userId = results[0].idx; // 세션에 사용자의 idx 저장
+            console.log("Session 사용자 idx:", req.session.userId); // session 정보 확인
+
             result.success = true;
             result.message = "로그인 성공!";
             result.data = results[0]; // 로그인에 성공한 사용자 정보 저장
