@@ -1,0 +1,16 @@
+{
+  "name": "backend_server_process",
+  "version": "1.0.0",
+  "description": "백엔드 서버 과정 과제할 때 사용하는 프로젝트",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "유소미",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.3",
+    "express-session": "^1.18.0",
+    "mysql": "^2.18.1"
+  }
+}
