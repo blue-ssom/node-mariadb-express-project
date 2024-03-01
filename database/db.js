@@ -1,4 +1,4 @@
-// mariadb 모듈 할당
+// mariaDB 모듈 할당
 const maria = require('mysql')
 
 // creationConnection 메소드 호출
