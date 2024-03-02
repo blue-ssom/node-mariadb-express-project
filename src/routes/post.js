@@ -71,7 +71,7 @@ router.post('/', async(req, res) => {
 
         // DB통신
         const createPostResult = await new Promise((resolve, reject) => {
-            maria.query('INSERT INTO posts (user_idx, title, content, creationDate, updationDate) VALUES (?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)', [sessionUserIdx, title, content], (err, results) => {
+            maria.query('INSERT INTO post (user_idx, title, content, creationDate, updationDate) VALUES (?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)', [sessionUserIdx, title, content], (err, results) => {
                 if (err) {
                     reject(err); // 오류 발생 시 reject 호출
                 } else {

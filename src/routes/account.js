@@ -111,8 +111,6 @@ router.get('/:idx', async(req, res) => {
         // 예외처리
         // if (!sessionUserIdx) {
         //   throw new Error("잘못된 접근입니다.")   // 세션이 없는 경우
-        // } else if (requestedUserIdx !== sessionUserIdx) {
-            //throw new Error("잘못된 접근입니다.");  // 요청된 idx와 세션에 저장된 userIdx가 일치하지 않는 경우
         // }
 
         // DB통신
@@ -192,6 +190,7 @@ router.post('/', async(req, res) => {
         if (signUpResult.affectedRows > 0) {
             result.success = true;
             result.message = "회원가입 성공!";
+            result.data = signUpResult;
         } else {
             result.message = "회원가입 실패";
         }
@@ -205,12 +204,79 @@ router.post('/', async(req, res) => {
 });
 
 // 회원 정보 수정
-router.put('/', (req, res) => {
+router.put('/:idx', async(req, res) => {
+    const {password, name, phoneNumber, email, address } = req.body
+    console.log(req.body);
+    const requestedUserIdx = req.params.idx; // 사용자가 입력한 idx
+    const sessionUserIdx = req.session.userIdx; // 세션에 저장된 사용자 idx
+    console.log("회원 정보 수정 세션: ", sessionUserIdx);
+
+    const result = {
+            "success" : false,
+            "message" : "",
+            "data" : null
+        }
+   
+    try {
+
+        // 예외처리
+
+        // if (!sessionUserIdx) {
+        //   throw new Error("잘못된 접근입니다.")   // 세션이 없는 경우
+        // }
+
+        if(password === null || password === undefined || password === ""){
+            throw new Error("비밀번호를 입력해주세요.")
+        }else if(name === null || name === undefined || name === ""){
+            throw new Error("이름 입력해주세요.")
+        }else if(phoneNumber === null || phoneNumber === undefined || phoneNumber === ""){
+            throw new Error("전화번호를 입력해주세요.")
+        }else if(email === null || email === undefined || email === ""){
+            throw new Error("이메일을 입력해주세요.")
+        }else if(address === null || address === undefined || address === ""){
+            throw new Error("주소를 입력해주세요.")
+        }
+
+        // DB통신
+        // 1. 아이디 중복 확인
+        const duplicateResult = await utils.checkDuplicateId(id);
+        if (duplicateResult) {
+            throw new Error("이미 존재하는 아이디입니다.");
+        }
+
+        // 2. 이메일 중복 확인
+        // 3. 전화번호 중복 확인
+
+        // 내 정보 수정 진행
+        const updateUserResult = await new Promise((resolve, reject) => {
+            maria.query('UPDATE user SET password=?, name=?, phoneNumber=?, email=?, address=? WHERE idx=?', [password, name, phoneNumber, email, address, sessionUserIdx], (err, results) => {
+                if (err) {
+                    reject(err); // 오류 발생 시 reject 호출
+                } else {
+                    resolve(results); // 결과 반환 시 resolve 호출
+                }
+            });
+        });
+
+        // DB 통신 결과 처리
+        if (updateUserResult.affectedRows > 0) {
+            result.success = true;
+            result.message = "내 정보 수정 성공!";
+            result.data = updateUserResult;
+        } else {
+            result.message = "내 정보 수정 실패";
+        }
+        
+    } catch(e) {
+        result.message = e.message;
+    } finally {
+        res.send(result);
+    }
 
 });
 
 // 회원 탈퇴
-router.delete('/', (req, res) => {
+router.delete('/:idx', (req, res) => {
 
 });
 
