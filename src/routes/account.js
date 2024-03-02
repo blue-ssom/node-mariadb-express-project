@@ -204,10 +204,12 @@ router.post('/', async(req, res) => {
 
 });
 
+// 회원 정보 수정
 router.put('/', (req, res) => {
 
 });
 
+// 회원 탈퇴
 router.delete('/', (req, res) => {
 
 });

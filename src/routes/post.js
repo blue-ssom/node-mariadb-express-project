@@ -2,7 +2,6 @@
 
 const router = require("express").Router() // express 안에 있는 Router만 import
 const maria = require("../../database/db");
-const utils = require('../utils');
 
 // 게시글 보기
 router.get('/all', async(req, res) => {
@@ -43,7 +42,7 @@ router.get('/all', async(req, res) => {
     }
 });
 
-// 게시글 추가하기
+// 게시글 추가
 router.post('/', async(req, res) => {
     const sessionUserIdx = req.session.userIdx; // 세션에 저장된 사용자 idx
     console.log("게시글 추가하기 세션: ", sessionUserIdx)
@@ -95,12 +94,12 @@ router.post('/', async(req, res) => {
     }
 });
 
-// 게시글 수정하기
+// 게시글 수정
 router.put('/', (req, res) => {
 
 });
 
-// 게시글 삭제하기
+// 게시글 삭제
 router.delete('/', (req, res) => {
 
 });

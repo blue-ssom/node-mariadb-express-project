@@ -32,6 +32,9 @@ app.use("/account", accountApi)
 const postApi = require("./src/routes/post") // post.js파일 import
 app.use("/post", postApi)
 
+const commentApi = require("./src/routes/comment") // comment.js파일 import
+app.use("/comment", commentApi)
+
 // Web Server 실행 코드
 app.listen(port, () => {
     console.log(`${port}번에서 HTTP Web Server 실행`)
