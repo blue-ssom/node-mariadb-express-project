@@ -6,6 +6,8 @@ const maria = require("../../database/db");
 // 게시글 보기
 router.get('/all', async(req, res) => {
     const sessionUserIdx = req.session.userIdx; // 세션에 저장된 사용자 idx
+    console.log("게시글 보기기 세션: ", sessionUserIdx)
+
     const result = {
             "success" : false,
             "message" : "",
@@ -95,12 +97,12 @@ router.post('/', async(req, res) => {
 });
 
 // 게시글 수정
-router.put('/', (req, res) => {
+router.put('/:postIdx', (req, res) => {
 
 });
 
 // 게시글 삭제
-router.delete('/', (req, res) => {
+router.delete('/:postIdx', (req, res) => {
 
 });
 
