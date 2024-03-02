@@ -276,11 +276,49 @@ router.put('/:idx', async(req, res) => {
 });
 
 // 회원 탈퇴
-router.delete('/:idx', (req, res) => {
+router.delete('/:idx', async(req, res) => {
+    const requestedUserIdx = req.params.idx; // 사용자가 입력한 idx
+    const sessionUserIdx = req.session.userIdx; // 세션에 저장된 사용자 idx
+    console.log("회원 탈퇴 세션: ", sessionUserIdx);
 
+    const result = {
+            "success" : false,
+            "message" : "",
+            "data" : null
+        }
+   
+    try {
+
+        // 예외처리
+        // if (!sessionUserIdx) {
+        //   throw new Error("잘못된 접근입니다.")   // 세션이 없는 경우
+        // }
+
+        // DB통신
+        const deleteUserResult = await new Promise((resolve, reject) => {
+            maria.query('DELETE FROM user WHERE idx = ?', [sessionUserIdx], (err, results) => {
+                if (err) {
+                    reject(err); // 오류 발생 시 reject 호출
+                } else {
+                    resolve(results); // 결과 반환 시 resolve 호출
+                }
+            });
+        });
+
+        // DB 통신 결과 처리
+        if (deleteUserResult.affectedRows > 0) {
+            result.success = true;
+            result.message = "회원 탈퇴 성공";
+        } else {
+            result.message = "회원 탈퇴 실패";
+        }
+        
+    } catch(e) {
+        result.message = e.message;
+    } finally {
+        res.send(result);
+    }
 });
-
-
 
 // export 작업
 module.exports = router
