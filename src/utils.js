@@ -18,6 +18,9 @@ function checkDuplicateId(id) {
     });
 }
 
+// 이메일 중복 확인
+
+//전화번호 중복 확인
 
 module.exports = {
     checkDuplicateId
