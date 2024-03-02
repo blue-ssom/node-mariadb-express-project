@@ -111,9 +111,9 @@ router.get('/:idx', async(req, res) => {
         // 예외처리
         // if (!sessionUserIdx) {
         //   throw new Error("잘못된 접근입니다.")   // 세션이 없는 경우
-        //} else if (requestedUserIdx !== sessionUserIdx) {
+        // } else if (requestedUserIdx !== sessionUserIdx) {
             //throw new Error("잘못된 접근입니다.");  // 요청된 idx와 세션에 저장된 userIdx가 일치하지 않는 경우
-        //}
+        // }
 
         // DB통신
         const userInfoResult = await new Promise((resolve, reject) => {
@@ -178,7 +178,7 @@ router.post('/', async(req, res) => {
         // 3. 전화번호 중복 확인
 
         // 회원가입 진행
-        const insertResult = await new Promise((resolve, reject) => {
+        const signUpResult = await new Promise((resolve, reject) => {
             maria.query('INSERT INTO user (id, password, name, phoneNumber, email, address) VALUES (?, ?, ?, ?, ?, ?)', [id, password, name, phoneNumber, email, address], (err, results) => {
                 if (err) {
                     reject(err); // 오류 발생 시 reject 호출
@@ -189,7 +189,7 @@ router.post('/', async(req, res) => {
         });
 
         // DB 통신 결과 처리
-        if (insertResult.affectedRows > 0) {
+        if (signUpResult.affectedRows > 0) {
             result.success = true;
             result.message = "회원가입 성공!";
         } else {
