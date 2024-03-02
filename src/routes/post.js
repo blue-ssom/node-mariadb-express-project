@@ -125,7 +125,7 @@ router.put('/:postIdx', async(req, res) => {
 
         // DB통신
         const updatePostResult = await new Promise((resolve, reject) => {
-            maria.query('UPDATE post SET title=?, content=?, updationDate=CURRENT_TIMESTAMP WHERE post_idx=? AND user_idx=?', [title, content, postIdx, sessionUserIdx], (err, results) => {
+            maria.query('UPDATE post SET title=?, content=?, updationDate=CURRENT_TIMESTAMP WHERE post_idx=?', [title, content, postIdx], (err, results) => {
                 if (err) {
                     reject(err); // 오류 발생 시 reject 호출
                 } else {

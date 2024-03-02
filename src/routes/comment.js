@@ -114,7 +114,7 @@ router.put('/:postIdx/:commentIdx', async(req, res) => {
     console.log("댓글 수정하기 세션: ", sessionUserIdx)
     console.log("postIdx: ", postIdx);
     console.log("commentIdx: ", commentIdx);
-    console.log("content: ", body);
+    console.log("content: ", content);
 
     try {
 
@@ -128,7 +128,7 @@ router.put('/:postIdx/:commentIdx', async(req, res) => {
         }
 
         // DB통신
-        const updatePostResult = await new Promise((resolve, reject) => {
+        const updateCommentResult = await new Promise((resolve, reject) => {
             maria.query('UPDATE comment SET content = ?, updationDate = CURRENT_TIMESTAMP WHERE comment_id AND post_id = ? AND user_idx = ?', [content, commentIdx, postIdx, sessionUserIdx], (err, results) => {
                 if (err) {
                     reject(err); // 오류 발생 시 reject 호출
@@ -140,10 +140,10 @@ router.put('/:postIdx/:commentIdx', async(req, res) => {
 
         // DB 통신 결과 처리
         // affectedRows는 삽입된 행의 수
-        if (updatePostResult.affectedRows > 0) {
+        if (updateComentResult.affectedRows > 0) {
             result.success = true;
             result.message = "게시글 수정하기";
-            result.data = updatePostResult;
+            result.data = updateCommentResult;
         } else {
             result.message = "게시글 수정 실패";
         }
@@ -158,8 +158,54 @@ router.put('/:postIdx/:commentIdx', async(req, res) => {
 });
 
 // 댓글 삭제
-router.delete('/:postIdx/:commentIdx', (req, res) => {
+router.delete('/:postIdx/:commentIdx', async(req, res) => {
+    const postIdx = req.params.postIdx; // 사용자가 입력한 postIdx
+    const commentIdx = req.params.commentIdx; // 사용자가 입력한 commentIdx
+    const sessionUserIdx = req.session.userIdx; // 세션에 저장된 사용자 idx
 
+    const { content } = req.body
+    const result = {
+        "success" : false,
+        "message" : "",
+        "data" : null
+    }
+
+    console.log("댓글 삭제하기하기 세션: ", sessionUserIdx)
+    console.log("postIdx: ", postIdx);
+    console.log("commentIdx: ", commentIdx);
+
+    try {
+
+        // 예외처리
+        // if (!sessionUserIdx) {
+        //   throw new Error("잘못된 접근입니다.")   // 세션이 없는 경우
+        // } 
+
+        // DB통신
+        const deletePostResult = await new Promise((resolve, reject) => {
+            maria.query('DELETE FROM post WHERE post_id = ?', [postIdx], (err, results) => {
+                if (err) {
+                    reject(err); // 오류 발생 시 reject 호출
+                } else {
+                    resolve(results); // 결과 반환 시 resolve 호출
+                }
+            });
+        });
+
+        // DB 통신 결과 처리
+        // affectedRows는 삽입된 행의 수
+        if (deletePostResult.affectedRows > 0) {
+            result.success = true;
+            result.message = "게시글 삭제 성공";
+        } else {
+            result.message = "게시글 삭제 실패";
+        }
+        
+    } catch(e) {
+        result.message = e.message;
+    } finally {
+        res.send(result);
+    }
 });
 
 // export 작업
