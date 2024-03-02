@@ -2,6 +2,7 @@
 const express = require("express")
 const session = require('express-session');
 const maria = require("./database/db") // mariaDB연결
+const utils = require('./src/utils');
 
 const app = express()
 const port = 8000

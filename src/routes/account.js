@@ -2,6 +2,7 @@
 
 const router = require("express").Router() // express 안에 있는 Router만 import
 const maria = require("../../database/db");
+const utils = require('../utils');
 
 // 아이디 찾기
 router.get('/find-id', async(req, res) => {
@@ -99,6 +100,7 @@ router.get('/:idx', (req, res) => {
 
 });
 
+
 // 회원가입
 router.post('/', async(req, res) => {
     const { id, password, name, phoneNumber, email, address } = req.body
@@ -129,12 +131,15 @@ router.post('/', async(req, res) => {
 
         // DB통신
         // 1. 아이디 중복 확인
-        const duplicateResult = await checkDuplicateId(id);
+        const duplicateResult = await utils.checkDuplicateId(id);
         if (duplicateResult) {
             throw new Error("이미 존재하는 아이디입니다.");
         }
 
-        // 2. 회원가입 진행
+        // 2. 이메일 중복 확인
+        // 3. 전화번호 중복 확인
+
+        // 회원가입 진행
         const insertResult = await new Promise((resolve, reject) => {
             maria.query('INSERT INTO user (id, password, name, phoneNumber, email, address) VALUES (?, ?, ?, ?, ?, ?)', [id, password, name, phoneNumber, email, address], (err, results) => {
                 if (err) {
@@ -169,19 +174,7 @@ router.delete('/', (req, res) => {
 
 });
 
-// 아이디 중복 확인
-function checkDuplicateId(id) {
-    return new Promise((resolve, reject) => {
-        maria.query('SELECT COUNT(*) FROM user WHERE id = ?', [id], (err, results) => {
-            if (err) {
-                reject(err); // 에러 발생 시 처리
-            }
 
-            const { count } = results[0];
-            resolve(count > 0); // 중복 여부를 resolve로 반환
-        });
-    });
-}
 
 // export 작업
 module.exports = router
