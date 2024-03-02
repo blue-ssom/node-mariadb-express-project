@@ -4,6 +4,7 @@ const router = require("express").Router() // express 안에 있는 Router만 im
 const maria = require("../../database/db");
 const utils = require('../utils');
 
+
 // 아이디 찾기
 router.get('/find-id', async(req, res) => {
     const { name, phoneNumber} = req.body
@@ -96,10 +97,47 @@ router.get('/find-password', async(req, res) => {
 });
 
 // 내 정보 보기
-router.get('/:idx', (req, res) => {
+router.get('/:idx', async(req, res) => {
+    const requestedUserIdx = req.params.idx; // 사용자가 입력한 idx
+    const sessionUserIdx = req.session.userIdx; // 세션에 저장된 사용자 idx
+    const result = {
+            "success" : false,
+            "message" : "",
+            "data" : null
+        }
+   
+   try {
+
+        // 예외처리
+        // if (!sessionUserIdx) {
+        //   throw new Error("잘못된 접근입니다.")   // 세션이 없는 경우
+        //} else if (requestedUserIdx !== sessionUserIdx) {
+            //throw new Error("잘못된 접근입니다.");  // 요청된 idx와 세션에 저장된 userIdx가 일치하지 않는 경우
+        //}
+
+        // DB통신
+        const userInfoResult = await new Promise((resolve, reject) => {
+            maria.query('SELECT * FROM user WHERE idx = ?', [requestedUserIdx], (err, results) => {
+                if (err) {
+                    reject(err); // 오류 발생 시 reject 호출
+                } else {
+                    resolve(results); // 결과 반환 시 resolve 호출
+                }
+            });
+        });
+
+        // DB 통신 결과 처리
+        result.success = true;
+        result.message = "내 정보 보기";
+        result.data = userInfoResult[0];
+
+    } catch (e) {
+    result.message = e.message;
+    } finally {
+    res.send(result);
+    }
 
 });
-
 
 // 회원가입
 router.post('/', async(req, res) => {

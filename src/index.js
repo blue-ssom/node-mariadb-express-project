@@ -33,8 +33,8 @@ router.post("/", async (req, res) => {
 
         // DB 통신 결과 처리
         if (loginResult.length > 0) {
-            req.session.userId = results[0].idx; // 세션에 사용자의 idx 저장
-            console.log("Session 사용자 idx:", req.session.userId); // session 정보 확인
+            req.session.userIdx = results[0].idx; // 세션에 사용자의 idx 저장
+            console.log("Session 사용자 idx:", req.session.userIdx); // session 정보 확인
 
             result.success = true;
             result.message = "로그인 성공!";
