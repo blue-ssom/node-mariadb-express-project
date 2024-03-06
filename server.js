@@ -1,14 +1,13 @@
 // express.js import하기
 const express = require("express")
 const session = require('express-session');
-const maria = require("./database/db") // mariaDB연결
+const maria = require("./database/db")  // mariaDB연결
 const utils = require('./src/utils');
 
 const app = express()
 const port = 8000
 
-app.use(express.urlencoded({ extended: false })); // application/x-www-form-urlencode
-app.use(express.json()); // application/json
+app.use(express.json());    // application/json
 
 // 세션 설정
 app.use(session({

@@ -129,7 +129,7 @@ router.put('/:postIdx/:commentIdx', async(req, res) => {
 
         // DB통신
         const updateCommentResult = await new Promise((resolve, reject) => {
-            maria.query('UPDATE comment SET content = ?, updationDate = CURRENT_TIMESTAMP WHERE comment_id AND post_id = ? AND user_idx = ?', [content, commentIdx, postIdx, sessionUserIdx], (err, results) => {
+            maria.query('UPDATE comment SET content = ?, updationDate = CURRENT_TIMESTAMP WHERE comment_id AND post_id = ?', [content, commentIdx, postIdx], (err, results) => {
                 if (err) {
                     reject(err); // 오류 발생 시 reject 호출
                 } else {
@@ -153,7 +153,6 @@ router.put('/:postIdx/:commentIdx', async(req, res) => {
     } finally {
         res.send(result);
     }
-
 
 });
 
@@ -182,8 +181,8 @@ router.delete('/:postIdx/:commentIdx', async(req, res) => {
         // } 
 
         // DB통신
-        const deletePostResult = await new Promise((resolve, reject) => {
-            maria.query('DELETE FROM post WHERE post_id = ?', [postIdx], (err, results) => {
+        const deleteCommentResult = await new Promise((resolve, reject) => {
+            maria.query('DELETE FROM comment WHERE post_id = ? AND comment_id = ?', [postIdx, commentIdx], (err, results) => {
                 if (err) {
                     reject(err); // 오류 발생 시 reject 호출
                 } else {
@@ -194,7 +193,7 @@ router.delete('/:postIdx/:commentIdx', async(req, res) => {
 
         // DB 통신 결과 처리
         // affectedRows는 삽입된 행의 수
-        if (deletePostResult.affectedRows > 0) {
+        if (deleteCommentResult.affectedRows > 0) {
             result.success = true;
             result.message = "게시글 삭제 성공";
         } else {

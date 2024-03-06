@@ -96,7 +96,7 @@ router.get('/find-password', async(req, res) => {
 
 });
 
-// 내 정보 보기
+// 특정 user 정보 보기
 router.get('/:idx', async(req, res) => {
     const requestedUserIdx = req.params.idx; // 사용자가 입력한 idx
     const sessionUserIdx = req.session.userIdx; // 세션에 저장된 사용자 idx
@@ -187,13 +187,16 @@ router.post('/', async(req, res) => {
         });
 
         // DB 통신 결과 처리
-        if (signUpResult.affectedRows > 0) {
-            result.success = true;
-            result.message = "회원가입 성공!";
-            result.data = signUpResult;
-        } else {
-            result.message = "회원가입 실패";
-        }
+        result.success = true;
+        result.message = "회원가입 성공!";
+        result.data = signUpResult;
+        // if (signUpResult.affectedRows > 0) {
+        //     result.success = true;
+        //     result.message = "회원가입 성공!";
+        //     result.data = signUpResult;
+        // } else {
+        //     result.message = "회원가입 실패";
+        // }
         
     } catch(e) {
         result.message = e.message;
@@ -203,8 +206,8 @@ router.post('/', async(req, res) => {
 
 });
 
-// 회원 정보 수정
-router.put('/:idx', async(req, res) => {
+// 내 회원 정보 수정
+router.put('/', async(req, res) => {
     const {password, name, phoneNumber, email, address } = req.body
     console.log(req.body);
     const requestedUserIdx = req.params.idx; // 사용자가 입력한 idx
@@ -275,8 +278,8 @@ router.put('/:idx', async(req, res) => {
 
 });
 
-// 회원 탈퇴
-router.delete('/:idx', async(req, res) => {
+// 내 회원 탈퇴
+router.delete('/', async(req, res) => {
     const requestedUserIdx = req.params.idx; // 사용자가 입력한 idx
     const sessionUserIdx = req.session.userIdx; // 세션에 저장된 사용자 idx
     console.log("회원 탈퇴 세션: ", sessionUserIdx);

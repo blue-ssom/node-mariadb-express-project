@@ -21,15 +21,17 @@ router.post("/", async (req, res) => {
         }
 
         // DB통신
-        const loginResult = await new Promise((resolve, reject) => {
-            maria.query('SELECT * FROM user WHERE id = ? AND password = ?', [id, password], (err, results) => {
-                if (err) {
-                    reject(err); // 오류 발생 시 reject 호출
-                } else {
-                    resolve(results); // 결과 반환 시 resolve 호출
-                }
-            });
-        });
+        // const loginResult = await new Promise((resolve, reject) => {
+        //     maria.query('SELECT * FROM user WHERE id = ? AND password = ?', [id, password], (err, results) => {
+        //         if (err) {
+        //             reject(err); // 오류 발생 시 reject 호출
+        //         } else {
+        //             resolve(results); // 결과 반환 시 resolve 호출
+        //         }
+        //     });
+        // });
+
+        const loginResult = await maria.query('SELECT * FROM user WHERE id = ? AND password = ?', [id, password])
 
         // DB 통신 결과 처리
         if (loginResult.length > 0) {
