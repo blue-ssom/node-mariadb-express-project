@@ -24,15 +24,7 @@ router.get('/find-id', async(req, res) => {
         }
 
         // DB통신
-        const findIdResult = await new Promise((resolve, reject) => {
-            maria.query('SELECT id FROM user WHERE name = ? AND phoneNumber = ?', [name, phoneNumber], (err, results) => {
-                if (err) {
-                    reject(err); // 오류 발생 시 reject 호출
-                } else {
-                    resolve(results); // 결과 반환 시 resolve 호출
-                }
-            });
-        });
+        const findIdResult = await maria.query('SELECT id FROM user WHERE name = ? AND phoneNumber = ?', [name, phoneNumber])
 
         // DB 통신 결과 처리
         if (findIdResult.length > 0) {
@@ -70,15 +62,8 @@ router.get('/find-password', async(req, res) => {
         }
 
         // DB통신
-        const findIdResult = await new Promise((resolve, reject) => {
-            maria.query('SELECT password FROM user WHERE id = ? AND name = ? AND phoneNumber = ?', [id, name, phoneNumber], (err, results) => {
-                if (err) {
-                    reject(err); // 오류 발생 시 reject 호출
-                } else {
-                    resolve(results); // 결과 반환 시 resolve 호출
-                }
-            });
-        });
+        const findIdResult = await maria.query('SELECT password FROM user WHERE id = ? AND name = ? AND phoneNumber = ?', [id, name, phoneNumber])
+
 
         // DB 통신 결과 처리
         if (findIdResult.length > 0) {
@@ -109,25 +94,20 @@ router.get('/:idx', async(req, res) => {
    try {
 
         // 예외처리
-        // if (!sessionUserIdx) {
-        //   throw new Error("잘못된 접근입니다.")   // 세션이 없는 경우
-        // }
+        if (!sessionUserIdx) {
+          throw new Error("잘못된 접근입니다.")   // 세션이 없는 경우
+        }
 
         // DB통신
-        const userInfoResult = await new Promise((resolve, reject) => {
-            maria.query('SELECT * FROM user WHERE idx = ?', [requestedUserIdx], (err, results) => {
-                if (err) {
-                    reject(err); // 오류 발생 시 reject 호출
-                } else {
-                    resolve(results); // 결과 반환 시 resolve 호출
-                }
-            });
-        });
+        //const userInfoResult = await maria.query('SELECT * FROM user WHERE idx = ?', [requestedUserIdx])
+        const connection = await maria.getConnection(); // 연결 생성
+        const [rows, fields] = await connection.execute('SELECT * FROM user WHERE idx = ?', [requestedUserIdx])
+
 
         // DB 통신 결과 처리
         result.success = true;
         result.message = "내 정보 보기";
-        result.data = userInfoResult[0];
+        result.data = rows[0];
 
     } catch (e) {
     result.message = e.message;
@@ -176,27 +156,11 @@ router.post('/', async(req, res) => {
         // 3. 전화번호 중복 확인
 
         // 회원가입 진행
-        const signUpResult = await new Promise((resolve, reject) => {
-            maria.query('INSERT INTO user (id, password, name, phoneNumber, email, address) VALUES (?, ?, ?, ?, ?, ?)', [id, password, name, phoneNumber, email, address], (err, results) => {
-                if (err) {
-                    reject(err); // 오류 발생 시 reject 호출
-                } else {
-                    resolve(results); // 결과 반환 시 resolve 호출
-                }
-            });
-        });
+        const signUpResult = await maria.query('INSERT INTO user (id, password, name, phoneNumber, email, address) VALUES (?, ?, ?, ?, ?, ?)', [id, password, name, phoneNumber, email, address])
 
         // DB 통신 결과 처리
         result.success = true;
-        result.message = "회원가입 성공!";
         result.data = signUpResult;
-        // if (signUpResult.affectedRows > 0) {
-        //     result.success = true;
-        //     result.message = "회원가입 성공!";
-        //     result.data = signUpResult;
-        // } else {
-        //     result.message = "회원가입 실패";
-        // }
         
     } catch(e) {
         result.message = e.message;
@@ -251,15 +215,7 @@ router.put('/', async(req, res) => {
         // 3. 전화번호 중복 확인
 
         // 내 정보 수정 진행
-        const updateUserResult = await new Promise((resolve, reject) => {
-            maria.query('UPDATE user SET password=?, name=?, phoneNumber=?, email=?, address=? WHERE idx=?', [password, name, phoneNumber, email, address, sessionUserIdx], (err, results) => {
-                if (err) {
-                    reject(err); // 오류 발생 시 reject 호출
-                } else {
-                    resolve(results); // 결과 반환 시 resolve 호출
-                }
-            });
-        });
+        const updateUserResult = await maria.query('UPDATE user SET password=?, name=?, phoneNumber=?, email=?, address=? WHERE idx=?', [password, name, phoneNumber, email, address, sessionUserIdx])
 
         // DB 통신 결과 처리
         if (updateUserResult.affectedRows > 0) {
@@ -298,15 +254,7 @@ router.delete('/', async(req, res) => {
         // }
 
         // DB통신
-        const deleteUserResult = await new Promise((resolve, reject) => {
-            maria.query('DELETE FROM user WHERE idx = ?', [sessionUserIdx], (err, results) => {
-                if (err) {
-                    reject(err); // 오류 발생 시 reject 호출
-                } else {
-                    resolve(results); // 결과 반환 시 resolve 호출
-                }
-            });
-        });
+        const deleteUserResult = await maria.query('DELETE FROM user WHERE idx = ?', [sessionUserIdx])
 
         // DB 통신 결과 처리
         if (deleteUserResult.affectedRows > 0) {

@@ -1,7 +1,7 @@
 // 로그인 API
 
 const router = require("express").Router() // express 안에 있는 Router만 import
-const maria = require("../database/db");
+const maria = require("../../database/db");
 
 // 로그인 라우트
 router.post("/", async (req, res) => {
@@ -31,16 +31,17 @@ router.post("/", async (req, res) => {
         //     });
         // });
 
-        const loginResult = await maria.query('SELECT * FROM user WHERE id = ? AND password = ?', [id, password])
+        const connection = await maria.getConnection(); // 연결 생성
+        const [rows, fields] = await connection.execute('SELECT * FROM user WHERE id = ? AND password = ?', [id, password])
 
         // DB 통신 결과 처리
-        if (loginResult.length > 0) {
-            req.session.userIdx = results[0].idx; // 세션에 사용자의 idx 저장
+        if (rows.length > 0) {
+            req.session.userIdx = rows[0].idx; // 세션에 사용자의 idx 저장
             console.log("Session 사용자 idx:", req.session.userIdx); // session 정보 확인
 
             result.success = true;
             result.message = "로그인 성공!";
-            result.data = results[0]; // 로그인에 성공한 사용자 정보 저장
+            result.data = rows[0]; // 로그인에 성공한 사용자 정보 저장
         } else {
             result.message = "해당 계정 정보가 존재하지 않습니다.";
         }
